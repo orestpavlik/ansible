@@ -1,0 +1,6 @@
+ - name: aws_nginx
+   hosts: aws_nginx
+   vars_files:
+     - variables.yml
+   roles:
+       - { role: nginx }

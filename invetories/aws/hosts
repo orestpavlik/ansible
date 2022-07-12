@@ -1,0 +1,9 @@
+[aws_nginx]
+#nginx_1    ansible_host=172.31.34.69
+nginx_2    ansible_host=172.31.45.25
+#nginx_3    ansible_host=172.31.43.64
+
+[aws_ubuntu]
+aws_1    ansible_host=172.31.44.106
+aws_2    ansible_host=172.31.44.6
+aws_3    ansible_host=172.31.33.127
