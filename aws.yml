@@ -1,6 +1,14 @@
- - name: aws_nginx
+ - name: consul client cluster
+   hosts: aws_consul
+   vars_files:
+     - variables.yml
+   roles:
+       - consul_client
+
+ - name: consul nginx cluster
    hosts: aws_nginx
    vars_files:
      - variables.yml
    roles:
-       - { role: nginx }
+       - nginx
+       - consul_agent

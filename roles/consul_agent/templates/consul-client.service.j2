@@ -1,0 +1,37 @@
+# [Unit]
+# Description=consul client
+# Requires=network-online.target
+# After=network-online.target
+
+# [Service]
+# User={{ consul_client_user_info.user }}
+# Group={{ consul_client_user_info.group }}
+# Environment=GOMAXPROCS=2
+# Restart=on-failure
+# ExecStart={{ consul_client_install_dir }}/consul agent -config-dir={{ consul_client_config_dir }}/client
+# ExecReload=/bin/kill -HUP $MAINPID
+# KillSignal=SIGINT
+
+# [Install]
+# WantedBy=multi-user.target
+
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+
+[Service]
+Environment=dev
+User={{ consul_client_user_info.user }}
+Group={{ consul_client_user_info.group }}
+ExecStart={{ consul_client_install_dir }}/consul agent -config-dir={{ consul_client_config_dir }}/client/
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGTERM
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

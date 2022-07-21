@@ -1,0 +1,39 @@
+---
+- name: Install apt-transport-https
+  become: true
+  ansible.builtin.package:
+    name: apt-transport-https
+
+- name: Add an Apt signing key, uses whichever key is at the URL
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+  become: true
+
+
+- name: Setup HashiCorp Apt repository
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/hashicorp.list
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      ###############################################################################
+      # HashiCorp official
+      ###############################################################################
+      deb [arch=amd64] https://apt.releases.hashicorp.com focal main
+
+- name: debian | Update Apt Cache
+  apt:
+    update_cache: true
+  become: true
+
+- name: debian | Installing tools
+  apt:
+    name:
+      - tree
+      - unzip
+      - consul
+    state: present
+  become: true

@@ -3,20 +3,16 @@ user  {{ nginx_user }};
 error_log  {{ nginx_error_log }};
 pid        {{ nginx_pidfile }};
 
-
 worker_processes  {{ nginx_worker_processes }};
-
-
 
 events {
     worker_connections  {{ nginx_worker_connections }};
 }
+
 http{
+
     include       {{ nginx_mime_file_path }};
     default_type  application/octet-stream;
-
-    access_log  {{ nginx_access_log }};
-
 
     server {
         listen       {{ item.listen | default('80') }};
@@ -24,10 +20,9 @@ http{
                 
         error_page    500 502 503 504  /50x.html;
 
-        location      / {
-            root      html;
+            location /health {
+            access_log off;
+            return 200 "healthy\n";
         }
-
-
     }
 }

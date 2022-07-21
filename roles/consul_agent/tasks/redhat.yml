@@ -1,0 +1,28 @@
+---
+- name: redhat | Enabling EPEL Repo
+  yum:
+    name: epel-release
+    state: present
+  become: true
+  when: ansible_distribution != "Fedora"
+
+- name: redhat | Installing Additional Packages
+  package:
+    name:
+      - tree
+      - unzip
+      - dnf-plugins-core
+    state: present
+  become: true
+
+- name: This command will change the working directory to somedir/
+  ansible.builtin.shell:
+    cmd: dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+  become: true
+
+- name: redhat | Installing Additional Packages
+  ansible.builtin.dnf:
+    name:
+      - consul
+    state: present
+  become: true

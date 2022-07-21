@@ -1,0 +1,52 @@
+---
+# Define Ansible group for Consul servers
+consul_servers_group: aws_consul
+
+# Define interface to bind to...(eth0|eth1|enp0s8)
+consul_bind_interface: "{{ ansible_default_ipv4['interface'] | replace('-', '_') }}"
+
+consul_client_bind_interface: eth0
+
+consul_client_config_dir: /etc/consul.d
+consul_client_config_file: /etc/consul.conf
+
+#https://www.consul.io/docs/agent/options.html
+consul_client_configuration:
+  datacenter: dc1
+  client_addr: 127.0.0.1
+  data_dir: /var/consul/data
+  enable_syslog: true
+  encrypt: ocJ4HO6/Jz2fsmIM0Uzfqm+e2ZaRoAzgl92TBikMb0w= # Generate using 'consul keygen' - Needs to match servers
+  log_level: DEBUG
+  node_name: "{{ ansible_hostname }}"
+  retry_join: |
+    {% set servers = [] %}
+    {% for server in groups[consul_servers_group] %}
+    {%   set _ = servers.append(hostvars[server]['ansible_'+consul_bind_interface]['ipv4']['address']) %}
+    {% endfor %}
+    {{ servers }}
+  server: true
+  bootstrap: true
+  ui_config:
+    enabled: true
+  addresses:
+    http: 0.0.0.0
+  ports:
+    http: 8500
+
+nginx_config:
+  service:
+    name: nginx
+    port: 5000
+  
+
+
+
+consul_client_install_dir: /usr/bin
+
+# Define Consul user info to use for service
+consul_client_user_info:
+  user: consul
+  group: consul
+
+consul_client_version: 1.12.3
