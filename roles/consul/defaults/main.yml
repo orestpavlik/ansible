@@ -1,9 +1,11 @@
 ---
 # Define Ansible group for Consul servers
 consul_servers_group: aws_consul
-
+consul_nginx_group: aws_nginx
 # Define interface to bind to...(eth0|eth1|enp0s8)
 consul_bind_interface: "{{ ansible_default_ipv4['interface'] | replace('-', '_') }}"
+
+ipv4: "{{ ansible_default_ipv4.address|default(ansible_all_ipv4_addresses) }}"
 
 consul_client_bind_interface: eth0
 

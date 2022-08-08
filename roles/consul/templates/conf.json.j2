@@ -1,0 +1,46 @@
+{
+{% if group_names[0] == consul_servers_group %}
+    "addresses": {
+        "http": "0.0.0.0"
+    },
+{% endif %}
+{% if group_names[0] == consul_servers_group %}
+    "bootstrap": true,
+{% endif %}
+    "client_addr": "127.0.0.1",
+    "data_dir": "/var/consul/data",
+    "datacenter": "dc1",
+    "enable_syslog": true,
+    "encrypt": "ocJ4HO6/Jz2fsmIM0Uzfqm+e2ZaRoAzgl92TBikMb0w=",
+    "log_level": "DEBUG",
+    "node_name": "{{ ansible_hostname }}",
+{% if group_names[0] == consul_servers_group %}
+    "ports": {
+        "http": 8500
+    },
+{% endif %}
+{#    "retry_join":{% set servers  = [] %}{% for server in groups[consul_servers_group] %}{%   set _ = servers.append(hostvars[server]['ansible_'+consul_bind_interface]['ipv4']['address']) %}{% endfor %}{{ servers  | replace('\'', '\"') | regex_replace( ipv4 , "") }}, #}
+      {% set list_server  = [] %}{% for server in groups[consul_servers_group] %}{%   set _ = list_server.append(hostvars[server]['ansible_'+consul_bind_interface]['ipv4']['address']) %}{% endfor %}
+      "retry_join":{% set servers = [] %}{% for ipaddr in list_server %}{% if ipaddr != ipv4 %}{% set _ = servers.append(ipaddr) %} {% endif %}{% endfor %}{{ servers | replace('\'', '\"')  }},
+{% if group_names[0] == consul_servers_group %}
+    "server": true,
+    "ui_config": {
+        "enabled": true
+    }
+{% endif %}
+
+{% if group_names[0] == consul_nginx_group %}
+    "server": false,
+    "service": {
+        "check": {
+            "http": "http://127.0.0.1:80/health",
+            "id": "nginx",
+            "interval": "10s",
+            "method": "POST",
+            "name": "Service health nginx"
+        },
+        "name": "nginx",
+        "port": 80
+    }
+{% endif %}
+}

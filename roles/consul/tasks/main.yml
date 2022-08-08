@@ -1,0 +1,17 @@
+---
+- include_tasks: "{{ item }}"
+  when: ansible_os_family == "Debian"
+  loop:
+    - debian.yml
+    - accounts.yml
+    - config.yml
+    - services.yml
+
+- include_tasks: "{{ item }}"
+  when: ansible_os_family == "RedHat"
+  loop:
+    - redhat.yml
+    - accounts.yml
+    - config.yml
+    - services.yml
+
